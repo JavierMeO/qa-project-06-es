@@ -9,22 +9,21 @@ def positive_assert(kit_body):
     assert user_response.json()["name"] == kit_body["name"]
 
 
-def negative_assert_symbol(kit_body):
-
+def negative_assert(kit_body):
     response = sender_stand_request.create_kit(kit_body)
 
     assert response.status_code == 400
     assert response.json()["code"] == 400
-    assert response.json()["message"] == 'El nombre debe contener sólo letras latino,' \
-                                         'un espacio y un guión. De 2 a 15 caracteres'
 
-def negative_assert_no_name(kit_body):
+    if kit_body is None:
+        expected_message = "No se enviaron todos los parámetros requeridos"
 
-    response = sender_stand_request.create_kit(kit_body)
+    else:
+        expected_message = "El nombre que ingresaste es incorrecto. " \
+                        "Los nombres solo pueden contener caracteres latinos, " \
+                        "los nombres deben tener al menos 2 caracteres y no más de 15 caracteres"
 
-    assert response.status_code == 400
-    assert response.json()["code"] == 400
-    assert response.json()["message"] == "No se han aprobado todos los parámetros requeridos"
+    assert response.json()["message"] == expected_message
 
 #El número permitido de caracteres (1):
 def test_create_kit_1_letter_in_name_is_allowed():
@@ -35,11 +34,11 @@ def test_create_kit_511_letters_in_name_is_allowed():
     positive_assert(kit_body.kit_body_2)
 #El número de caracteres es menor que la cantidad permitida (0):
 def test_create_kit_0_letter0_in_name_is_forbidden():
-    negative_assert_no_name(kit_body.kit_body_3)
+    negative_assert(kit_body.kit_body_3)
 
 #El número de caracteres es mayor que la cantidad permitida (512):
 def test_create_kit_512_letter_in_name_is_forbidden():
-    negative_assert_symbol(kit_body.kit_body_4)
+    negative_assert(kit_body.kit_body_4)
 #Se permiten caracteres especiales:
 def test_create_kit_special_characters_in_name_is_allowed():
     positive_assert(kit_body.kit_body_5)
@@ -54,8 +53,8 @@ def test_create_kit_numbers_in_name_are_allowed():
 
 #El parámetro no se pasa en la solicitud:
 def test_create_kit_empty_in_name_is_forbidden():
-    negative_assert_no_name(kit_body.kit_body_8)
+    negative_assert(kit_body.kit_body_8)
 
 #Se ha pasado un tipo de parámetro diferente (número):
 def test_create_kit_int_in_name_is_forbidden():
-    negative_assert_symbol(kit_body.kit_body_9)
+    negative_assert(kit_body.kit_body_9)

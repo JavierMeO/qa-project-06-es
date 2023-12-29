@@ -14,11 +14,8 @@ def get_token():
 
 def create_kit(kit_body):
     auth_token = get_token()
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f"Bearer {auth_token}"
-    }
-    response = requests.post(configuration.URL_SERVICE + configuration.KITS_PATH, headers=headers,
+    data.headers["Authorization"] = f"Bearer {auth_token}"
+    response = requests.post(configuration.URL_SERVICE + configuration.KITS_PATH, headers=data.headers,
                              json=kit_body)
 
     return response
